@@ -1,0 +1,65 @@
+#UP416733 - Preetpal Basson
+import math                 #Imported math library
+from math import log        #imported from math libraries
+from math import sqrt
+from math import erf
+from math import exp
+
+def put_price(S0,K,T,sigma,r):      #Calculates the put options
+    f1=log(S0/K)
+    f2=(r+((sigma**2)/2.0))*T
+    f3=sigma*sqrt(T)
+    x1=(f1+f2)/f3                   
+    x2=x1 - sigma*sqrt(T)
+    return K*erf(-x2)*exp(-r*T) -S0*erf(-x1)    #Final formula for the put option & erf is used as the cumulative frequency function.
+
+def newton(f,x0,dx,tol,max_steps):          #Calculates the Newton-Raphson method.
+    def f(x):                               #Initial function
+        return x- exp(-2*x)
+    def dx(x):                              #Derivative of the above function
+        return 1 + 2*exp(-2*x)
+    
+    for i in range(0,max_steps):
+        x1 = x0 -(f(x0)/dx(x0))             #Newton-Raphson method
+        if abs(x1-x0)<tol:                  #This statement says that if number is not close to tol then it will run again until it is reach.
+            return x1
+        else:                               #This statement is where the iteration will be used again in the 
+            x0=x1
+    return x1
+
+def implied_volatility(S0,K,T,r,P):
+    sigma=0.20
+    max_steps=1
+    tol=0.0001
+    x1=(log(S0/K) + (r+((sigma**2)/2.0))*T)/(sigma*sqrt(T))                   
+    x2=x1 - sigma*sqrt(T)
+    #f1=K*erf(-x2)*exp(-r*T) -S0*erf(-x1)
+   #x11=((sigma**2)*T*sqrt(T) -(log(S0/K) +(r+(sigma**2)/2)*T)*sqrt(T))/((sigma**2)*T)
+    #x22=x11-sqrt(T)
+    #f2=K*erf(-x2)*exp(-r*T)*x22 -S0*erf(-x1)*x11
+    def put_price2(S0,K,T,sigma,r):
+        x11=((sigma**2)*T*sqrt(T) -(log(S0/K) +(r+(sigma**2)/2)*T)*sqrt(T))/((sigma**2)*T)
+        x22=x11-sqrt(T)
+        return K*erf(-x2)*exp(-r*T)*x22 -S0*erf(-x1)*x11
+    for i in range(0,max_steps):
+        
+        sigma1 = sigma - (put_price(S0,K,T,sigma,r)/put_price2(S0,K,T,sigma,r))             
+        if abs(sigma1-sigma)<tol:                  
+            return sigma1
+        else:  
+            sigma=sigma1                             
+    return sigma1
+
+def volatility_profile(prices,strikes,S0,T,r):
+    pass
+    
+    
+    
+def main():                 #Main function used to call functions
+    print("Put Option 1",put_price(100.0,90.0,1.0,0.14,0.05))
+    print("Put Option 2",put_price(120.0,100.0,0.05,0.25,0.05))
+    print("Newton's Method",newton(0,0.5,0,0.00000001,200))
+    print("Implied Volatilty",implied_volatility(21.0,20.0,0.25,0.1,1.875))
+    print("Implied Volatilty",implied_volatility(100.0,90.0,1.0,0.05,16.97))
+if __name__ =="__main__":
+    main()

@@ -1,0 +1,60 @@
+#UP416733 - Preetpal Basson
+import math        #
+
+def triangle(n):    #Calculates the triangle numbers
+    if n == 0:      #if the "if" statement is satified. "==" means equivalent to 
+        return 0    #This answer is returned 
+    return n + triangle(n-1)    #For all other answers this is returned
+
+def a(n):           #This is the same as above however this contains 2 "if" statements 
+    if n == 0:
+        return 1
+    if n == 1:
+        return 2
+    return 2*a(n-1) + 5*a(n-2) #If the 2 "if" statements are not satified, this is returned
+
+def b(n,C,D,E,F):           #The same as above. However "if" statements return the answer as variable (defined in main when using function)
+    if n == 0:
+        return E
+    if n == 1:
+        return F
+    return C*b(n-1,C,D,E,F) + D*b(n-2,C,D,E,F) #this is returned if both "if" statments are not satified. 
+
+def straddle_payoff(ST,K):      #This calculates the Straddle option Payoff
+    if ST < K:                  #< means less than 
+        return K-ST
+    if ST >= K:                 #>= means greater than or equal to    
+        return ST-K
+
+def straddle_price(S0,K,T,sigma,r,n):   #This is recursive function with nth binomial model.
+    zT= T/n                             #Calculates time step
+    u=math.exp(r*zT + sigma*math.sqrt(zT)) #Calculates up in binomial model 
+    d=math.exp(r*zT - sigma*math.sqrt(zT)) #Calculates down in binomial model 
+    q= (math.exp(r*zT)-d)/(u-d)            #Calculates risk neutral probability 
+    def binomial(nu,nd):                   #Define a new function called binomial
+        if (nu + nd ==n):
+            S = S0*u**nu*d**nd           #Stock price at expiry
+            return max(S-K,0.0)          #"max" function calculates returns S-K if it is postive otherwise 0. 
+        else:
+            x=math.exp(-r*zT)           #This is the discount factor
+            Vup=binomial(nu+1,nd)
+            Vdown=binomial(nu,nd+1)
+            return x*(q*Vup+ (1-q)*Vdown)
+    return binomial(0.0,0.0)
+
+def main():                         #Main function to call and use the function defined above. 
+    print("Triangle",triangle(0))
+    print("Triangle",triangle(2))
+    print("A",a(0))
+    print("A",a(1))
+    print("A",a(2))
+    print("B",b(0,2,5,1,2))
+    print("B",b(1,2,5,1,2))
+    print("B",b(2,2,5,1,2))
+    print("Straddle Payoff",straddle_payoff(3,4))
+    print("Straddle Payoff",straddle_payoff(5,3))
+    print("Straddle Price",straddle_price(100.0,90.0,1.0,0.14,0.05,10.0))
+    print("Straddle Price",straddle_price(200.0,80.0,1.0,0.14,0.025,5.0))
+    
+if __name__ == "__main__":
+    main()
