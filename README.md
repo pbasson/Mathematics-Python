@@ -1,3 +1,14 @@
-# Mathematics-Python-Assignments
+# Mathematics Python Assignments By Preetpal Basson
 
-This coursework from my work in python. There is my entire projects covered over the last 3 years. 
+## Overview
+
+This coursework showcases my Python projects, covering work from the past three years.
+
+## Features
+
+| Languages |
+|---|
+| Python |
+
+
+# END
